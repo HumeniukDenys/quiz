@@ -7,14 +7,23 @@
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <div id="quiz-container">
+    <div id="login-container">
+        <h1>Добро пожаловать в викторину!</h1>
+        <form id="login-form">
+            <label for="username">Введите ваше имя:</label>
+            <input type="text" id="username" name="username" required>
+            <button type="submit">Начать игру</button>
+        </form>
+    </div>
+
+    <div id="quiz-container" style="display: none;">
         <h1>Викторина</h1>
         <div id="timer"></div>
         <div id="question"></div>
         <div id="options"></div>
         <button id="next-button" style="display: none;">Следующий вопрос</button>
         <div id="score"></div>
-        <audio id="audio" controls style="display: none;"></audio> <!-- Аудиоэлемент -->
+        <audio id="audio" controls style="display: none;"></audio>
     </div>
     <script src="script.js"></script>
 </body>
