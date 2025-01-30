@@ -1,0 +1,14 @@
+[
+    {
+        "question": "Угадайте мелодию",
+        "audio": "audio/melody1.mp3",
+        "options": ["Калинка", "Катюша", "Смуглянка", "Подмосковные вечера"],
+        "answer": "Калинка"
+    },
+    {
+        "question": "Угадайте мелодию",
+        "audio": "audio/melody2.mp3",
+        "options": ["Yesterday", "Bohemian Rhapsody", "Smells Like Teen Spirit", "Hotel California"],
+        "answer": "Yesterday"
+    }
+]
