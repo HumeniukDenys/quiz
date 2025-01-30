@@ -4,12 +4,17 @@ let currentQuestionIndex = 0;
 let score = 0;
 let timeLeft = 10;
 let timerInterval;
+let playerName = "";
 
+const loginContainer = document.getElementById('login-container');
+const quizContainer = document.getElementById('quiz-container');
 const questionElement = document.getElementById('question');
 const optionsElement = document.getElementById('options');
 const nextButton = document.getElementById('next-button');
 const scoreElement = document.getElementById('score');
 const timerElement = document.getElementById('timer');
+const loginForm = document.getElementById('login-form');
+const usernameInput = document.getElementById('username');
 
 // Аудиоэлемент
 const audioElement = new Audio();
@@ -18,12 +23,25 @@ const audioElement = new Audio();
 const categoryFiles = {
     geography: 'geography.json',
     literature: 'literature.json',
-    music: 'music.json' // Новая категория
+    music: 'music.json'
 };
+
+// Обработчик отправки формы авторизации
+loginForm.addEventListener('submit', (event) => {
+    event.preventDefault();
+    playerName = usernameInput.value.trim();
+    if (playerName) {
+        loginContainer.style.display = 'none';
+        quizContainer.style.display = 'block';
+        showCategories();
+    } else {
+        alert('Пожалуйста, введите ваше имя.');
+    }
+});
 
 // Показ категорий
 function showCategories() {
-    questionElement.innerHTML = '<h2>Выберите категорию:</h2>';
+    questionElement.innerHTML = `<h2>${playerName}, выберите категорию:</h2>`;
     Object.keys(categoryFiles).forEach(category => {
         const button = document.createElement('button');
         button.textContent = category;
@@ -38,7 +56,7 @@ function showCategories() {
 // Загрузка вопросов для выбранной категории
 async function loadQuestions(file) {
     try {
-        const response = await fetch(file); // Загрузка JSON-файла
+        const response = await fetch(file);
         questions = await response.json();
         startGame();
     } catch (error) {
@@ -73,7 +91,7 @@ function showQuestion() {
         button.addEventListener('click', () => {
             stopTimer();
             if (currentCategory === 'music') {
-                audioElement.pause(); // Останавливаем мелодию
+                audioElement.pause();
             }
             checkAnswer(option);
         });
@@ -85,7 +103,7 @@ function showQuestion() {
 function checkAnswer(selectedOption) {
     const question = questions[currentQuestionIndex];
     if (selectedOption === question.answer) {
-        score++; // +1 балл за правильный ответ
+        score++;
     }
     scoreElement.textContent = `Счет: ${score}`;
     nextButton.style.display = 'block';
@@ -98,7 +116,7 @@ function nextQuestion() {
         showQuestion();
         nextButton.style.display = 'none';
     } else {
-        alert(`Игра окончена! Ваш счет: ${score}`);
+        alert(`Игра окончена, ${playerName}! Ваш счет: ${score}`);
         currentQuestionIndex = 0;
         score = 0;
         showCategories();
@@ -117,7 +135,7 @@ function startTimer() {
         if (timeLeft <= 0) {
             clearInterval(timerInterval);
             if (currentCategory === 'music') {
-                audioElement.pause(); // Останавливаем мелодию
+                audioElement.pause();
             }
             checkAnswer(null);
             nextQuestion();
@@ -131,6 +149,3 @@ function stopTimer() {
 
 // Обработчик кнопки "Следующий вопрос"
 nextButton.addEventListener('click', nextQuestion);
-
-// Показ категорий при запуске
-showCategories();
