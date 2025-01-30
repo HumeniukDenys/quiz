@@ -8,6 +8,7 @@ let playerName = "";
 
 const loginContainer = document.getElementById('login-container');
 const quizContainer = document.getElementById('quiz-container');
+const leaderboardContainer = document.getElementById('leaderboard-container');
 const questionElement = document.getElementById('question');
 const optionsElement = document.getElementById('options');
 const nextButton = document.getElementById('next-button');
@@ -15,6 +16,8 @@ const scoreElement = document.getElementById('score');
 const timerElement = document.getElementById('timer');
 const loginForm = document.getElementById('login-form');
 const usernameInput = document.getElementById('username');
+const leaderboardBody = document.querySelector('#leaderboard tbody');
+const playAgainButton = document.getElementById('play-again-button');
 
 // Аудиоэлемент
 const audioElement = new Audio();
@@ -25,6 +28,9 @@ const categoryFiles = {
     literature: 'literature.json',
     music: 'music.json'
 };
+
+// Таблица лидеров (хранится в localStorage)
+let leaderboard = JSON.parse(localStorage.getItem('leaderboard')) || [];
 
 // Обработчик отправки формы авторизации
 loginForm.addEventListener('submit', (event) => {
@@ -116,12 +122,54 @@ function nextQuestion() {
         showQuestion();
         nextButton.style.display = 'none';
     } else {
-        alert(`Игра окончена, ${playerName}! Ваш счет: ${score}`);
-        currentQuestionIndex = 0;
-        score = 0;
-        showCategories();
+        endGame();
     }
 }
+
+// Завершение игры
+function endGame() {
+    // Добавляем результат игрока в таблицу лидеров
+    leaderboard.push({ name: playerName, score: score });
+
+    // Сортируем таблицу лидеров
+    leaderboard.sort((a, b) => {
+        if (b.score === a.score) {
+            return a.name.localeCompare(b.name); // Сортировка по алфавиту при равных баллах
+        }
+        return b.score - a.score; // Сортировка по баллам (по убыванию)
+    });
+
+    // Сохраняем таблицу лидеров в localStorage
+    localStorage.setItem('leaderboard', JSON.stringify(leaderboard));
+
+    // Показываем таблицу лидеров
+    showLeaderboard();
+}
+
+// Показ таблицы лидеров
+function showLeaderboard() {
+    quizContainer.style.display = 'none';
+    leaderboardContainer.style.display = 'block';
+
+    // Очищаем таблицу
+    leaderboardBody.innerHTML = '';
+
+    // Заполняем таблицу
+    leaderboard.forEach((entry, index) => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+            <td>${index + 1}. ${entry.name}</td>
+            <td>${entry.score}</td>
+        `;
+        leaderboardBody.appendChild(row);
+    });
+}
+
+// Обработчик кнопки "Играть снова"
+playAgainButton.addEventListener('click', () => {
+    leaderboardContainer.style.display = 'none';
+    loginContainer.style.display = 'block';
+});
 
 // Таймер
 function startTimer() {
